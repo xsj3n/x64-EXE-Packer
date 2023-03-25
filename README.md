@@ -1,10 +1,17 @@
 # x64-EXE-Packer
 ## A software packer for 64 bit Windows exes. An exploratory project.
-The goal is to have a stub file decrypt an exe image from one of it's sections and then running the image that was contained within written in C++.
+Orginally, the primary purpose of software packers was to compress a binary, yet in such a way that the binary is still able to function. These days, encryption is also used on binaries to make reverse engineering it more difficult. This is a technique used by developers to protect the code they write, and by malware developers to protect the payloads they write. The binary is obviously unable to run whilst encrypted & compressed, so an intermediary binary is needed to "unpack" the binary. The binary that unpacks the encrypted/compressed binary and runs it in memory is referred to as the "stub". The portion that encrypts/compresses the payload and embeds it innto the stub is the "packer". 
 
-As of now, a working stub which is nothing more than a loader at the moment has been added, as well as a rust program to pack the data into the stub.
 
-Working on the encryption routine for the packer next.
+The goal is to have a stub decrypt an exe image from one of it's sections and then run the image in memory. The packer itself is being written in unsafe rust & the stub is written in C++.
+
+A custom cipher is also being written for the encryption/decryption routines in assembly, just to make the analysis of the packed bins more difficult. It'll make inserting dead control structures & file bumping bytes into the binaries easier later down the road.
+
+Progress
+  -Stub: Done
+  -Packer: Mostly Done
+  -Cipher: Done, I think, but needs more testing before implementation
+
 
 
 ## Sources
