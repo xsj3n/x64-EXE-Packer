@@ -8,9 +8,9 @@ The goal is to have a stub decrypt an exe image from one of it's sections and th
 A custom cipher is also being written for the encryption/decryption routines in assembly, just to make the analysis of the packed bins more difficult. It'll make inserting dead control structures & file bumping bytes into the binaries easier later down the road.
 
 Progress
-  -Stub: Done
-  -Packer: Mostly Done
-  -Cipher: Done, I think, but needs more testing before implementation
+-Stub: Done
+-Packer: Mostly Done
+-Cipher: Done, I think, but needs more testing before implementation
 
 
 
