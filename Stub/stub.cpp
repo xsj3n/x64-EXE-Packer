@@ -2,10 +2,6 @@
 #include <cstdlib>
 #include <Windows.h>
 
-#pragma section(".xss", read)
-
-// size will be dynamically compiled 
-__declspec(allocate(".xss")) UINT8 xss[139264] = { 0 };
 
 #define VirtAddr2Pointer(T, VirtualBase, VirtualOffset) (T)((PBYTE)VirtualBase + VirtualOffset)
 
