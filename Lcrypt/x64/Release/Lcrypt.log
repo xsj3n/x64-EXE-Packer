@@ -1,0 +1,4 @@
+﻿  Assembling lcrypt.asm...
+  dllmain.cpp
+  Mem.cpp
+  Lcrypt.vcxproj -> C:\Users\xis31\source\repos\Lcrypt\x64\Release\Lcrypt.lib
