@@ -1,5 +1,0 @@
-﻿  Source.cpp
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(260,9): warning C4477: 'printf' : format string '%p' requires an argument of type 'void *', but variadic argument 1 has type 'DWORDLONG'
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(261,9): warning C4477: 'printf' : format string '%p' requires an argument of type 'void *', but variadic argument 1 has type 'DWORDLONG'
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(262,9): warning C4477: 'printf' : format string '%p' requires an argument of type 'void *', but variadic argument 1 has type 'DWORDLONG'
-  Playgroundd.vcxproj -> C:\Users\xis31\Documents\Playgroundd\x64\Debug\Playgroundd.exe

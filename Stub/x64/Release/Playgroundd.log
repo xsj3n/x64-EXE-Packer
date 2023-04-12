@@ -1,9 +1,0 @@
-﻿  Source.cpp
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(58,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(324,28): warning C4244: 'initializing': conversion from 'ULONGLONG' to 'DWORD', possible loss of data
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(354,12): warning C4477: 'printf' : format string '%p' requires an argument of type 'void *', but variadic argument 1 has type 'ULONGLONG'
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(391,9): warning C4477: 'printf' : format string '%p' requires an argument of type 'void *', but variadic argument 1 has type 'DWORDLONG'
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(392,9): warning C4477: 'printf' : format string '%p' requires an argument of type 'void *', but variadic argument 1 has type 'DWORDLONG'
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(418,22): warning C4018: '<': signed/unsigned mismatch
-C:\Users\xis31\Documents\Playgroundd\Source.cpp(243): warning C4715: 'LoadPEFromSection': not all control paths return a value
-  Playgroundd.vcxproj -> C:\Users\xis31\Documents\Playgroundd\x64\Release\Playgroundd.exe
