@@ -1,14 +1,11 @@
 use memoffset::offset_of;
 use windows::{
-    core::*, Data::Xml::Dom::*, Win32::Foundation::*, Win32::System::Threading::*,
-    Win32::UI::WindowsAndMessaging::*,
+    core::*, Win32::Foundation::*
 };
-use windows_metadata::reader::File;
-
-use std::{arch::asm, io::{Read, Write, Seek, SeekFrom}, u8, mem::size_of, ops::Add, os::windows::prelude::{AsRawHandle, FileExt}, fs::OpenOptions};
-use std::io;
-use std::io::prelude::*;
+use std::{io::{Read, Write, Seek, SeekFrom}, u8, fs::OpenOptions};
 use pelite::image::{IMAGE_DOS_HEADER, IMAGE_NT_HEADERS64, IMAGE_SECTION_HEADER, IMAGE_FILE_HEADER};
+use std::env;
+use std::process::Command;
 
 // keys is two 64 bit keys next to eachother in mem
 // transform len_of_data number of bytes starting from data ptr
@@ -50,16 +47,14 @@ impl DatHolder {
         if len_of_data % 8 != 0 {
             panic!("[-] Data not aligned for encryption...")
         } 
-
-        let data_copy = self.dat.clone().into_boxed_slice(); 
-
-
         let k: [u64; 2] = [0x4226452948404D63, 0x294A404E63526655];
+        let data_copy = self.dat.clone().into_boxed_slice(); 
         
-        
+        println!("[*] Encrypting target PE image in {} 8-byte blocks", len_of_data / 8);
         let raw_asm_data: *const std::ffi::c_void = Encr_lilith_cwr(Box::into_raw(data_copy) as *const _ as *const std::ffi::c_void, k.as_ptr(), len_of_data);
         let enc_slice = std::slice::from_raw_parts(raw_asm_data as *const _ as *const u8, len_of_data as usize);
         _ = file.write_all(enc_slice);
+        println!("[*] PE image encryption finished & packed file written to disk");
         
     }
 
@@ -136,7 +131,7 @@ impl DatHolder {
 
 
 
-unsafe fn add_data_to_section_from_file(sz: u64, implantfile_src: &str, implant_dst: &str) -> BOOL {
+unsafe fn add_data_to_section_from_file(sz: u64, implantfile_src: &String, implant_dst: &String) -> BOOL {
 
    
 
@@ -155,7 +150,7 @@ unsafe fn add_data_to_section_from_file(sz: u64, implantfile_src: &str, implant_
     };
     
     dst_file.seek(SeekFrom::End(0)).unwrap();
-    println!("New section at 0x{:?}", dst_file.seek(SeekFrom::Current(0)));
+   
 
 
     src_data.encr_image(sz, dst_file);
@@ -223,45 +218,76 @@ unsafe fn append_scn_header(name: &str, image: &mut DatHolder, nt: &NT64, implan
 }
 
 
+fn get_current_user() -> String {
 
+   let out = match  Command::new("echo").arg("%username%").output() {
+    Ok(r) => r,
+    Err(e) => panic!("[-] Error determing current user: {}", e)
+   };
+   
+   let usrname = match std::str::from_utf8(&out.stdout) {
+    Ok(string_val) => string_val,
+    Err(e) => panic!("[-] Error convering whoami stdout bytes into utf-8 string: {}", e)
+   };
+
+   return usrname.to_string();
+    
+}
 
 
 
 fn main() -> () { 
 
    
+    let arg_src: Vec<String> = env::args().collect();
+    let argc = arg_src.len();
+    if argc > 5 {
+        println!("Rpack v0.1 (https://github.com/xsj3n/x64-EXE-Packer)\nUsage: rpack <targetfile>\nTARGET SPECIFICATION:\n Specify target:\n\t-O <outputfilename>");
+        std::process::exit(0);
 
-    let scn_name = ".xss\0\0\0\0";
+    } else if argc < 2 {
+        println!("Rpack v0.1 (https://github.com/xsj3n/x64-EXE-Packer)\nUsage: rpack <targetfile>\nTARGET SPECIFICATION:\n Specify target:\n\t-O <outputfilename>");
+        std::process::exit(0);
+    } 
 
-    let mut stubdata = match std::fs::read(".\\dat\\stub.exe") {
+    println!("Rpack v0.1 (https://github.com/xsj3n/x64-EXE-Packer");
+
+    let mut output_name: String = "output.exe".to_string();
+    if argc == 4 && arg_src[2] == "-O" {
+        output_name = arg_src[3].clone();
+    } 
+   
+    let targetfile = &arg_src[1];
+    // let current_usr = get_current_user();
+    let usrname = env::var("username").expect("[-] Username ENV not found");
+
+    
+
+
+    let mut stubdata = match std::fs::read("\\Users\\".to_owned() + &usrname +  "\\.rpack\\dat\\stub.exe") {
         Ok(f) => DatHolder{ dat: f },
         Err(e)  => panic!("[*] Error Reading File: {}", e),
     };
 
 
-    let implant_sz = std::fs::metadata(".\\dat\\calc.exe").unwrap().len();
-   
+    let implant_sz = std::fs::metadata(&targetfile).unwrap().len();
+    let scn_name = ".xss\0\0\0\0";
     unsafe {
         let nt = stubdata.get_nt();
         let _b = append_scn_header(scn_name, &mut stubdata, &nt, implant_sz as u32);
         let seh = stubdata.get_seh(&nt, 7);
         _ = stubdata.increment_number_of_sections(&nt);
-        println!("Virtual Size of New Section: {}", seh.VirtualSize);
     }
 
-    let mut out = match std::fs::File::create("output.exe") {
+    let mut out = match std::fs::File::create(&output_name) {
         Ok(f) => f,
         Err(e) => panic!("[*] Error Creating File: {}", e),
     }; _ = out.write_all(&stubdata.dat);
     std::mem::drop(out);
    
-    unsafe {
-        let nt = stubdata.get_nt();
-        let seh = stubdata. get_seh(&nt, 7);
-       _ =  add_data_to_section_from_file(implant_sz, ".\\dat\\calc.exe", "output.exe");
-       std::process::exit(0);
-    }
+    unsafe { _ =  add_data_to_section_from_file(implant_sz, targetfile, &output_name); }
     
-   
+
     
+    std::process::exit(1);
 }
