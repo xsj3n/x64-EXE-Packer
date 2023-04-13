@@ -1,5 +1,5 @@
 # x64-EXE-Packer
-## A software packer for 64 bit Windows exes. An exploratory project.
+## A software packer for 64 bit Windows executables. An exploratory project.
 
 Progress:
 - [x] Stub 
