@@ -5,6 +5,9 @@ Progress:
 - [x] Stub 
 - [x] Packer
 - [x] Custom Cipher
+- [ ] Junk Code Generator?
+- [ ] File Bumper?
+- [ ] Dynamic bytecode additions for static signature evasion? 
 - [ ] Polish & Tidy
 
 The stub, packer, and encryption routine are all ironed out on the logic side:
