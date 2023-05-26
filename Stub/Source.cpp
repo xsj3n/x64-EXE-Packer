@@ -465,7 +465,15 @@ MemoryPE Setup()
 
 	printf("\n========VIRTUAL PERMISSIONS\n\n");
 	
+	DWORD dOldone;
 	PIMAGE_SECTION_HEADER pSecRef = IMAGE_FIRST_SECTION(sMemPE.cpNTROOT);
+	
+	x = VirtualProtect(sMemPE.pPEBase, sMemPE.cpNTROOT->OptionalHeader.SizeOfHeaders, PAGE_READWRITE, &dOldone);
+	if (x == 0)
+	{
+		printf("[-] Stub Failure to Self-Modify\n");
+		exit(1);
+	}
 
 	for (int i = 0; i < sMemPE.cpNTROOT->FileHeader.NumberOfSections; ++i)
 	{
@@ -478,14 +486,6 @@ MemoryPE Setup()
 
 		CONST DWORD dImageCodeFlag = 0x60000020; // Read (0x40000000) + Execute (0x40000000) + Code Flag (0x20)
 		CONST DWORD dImageInitDatFlag = 0x40000040; // Read (0x40000000) + Inited Data (0x40)
-
-		
-		x = VirtualProtect(sMemPE.pPEBase, sMemPE.cpNTROOT->OptionalHeader.SizeOfHeaders, PAGE_READWRITE, &dOld);
-		if (x == 0)
-		{
-			printf("[-] Stub Failure to Self-Modify\n");
-			exit(1);
-		}
 
 
 		switch (dSPerms) {
@@ -502,14 +502,10 @@ MemoryPE Setup()
 
 		}
 
-
 	}
 	
-	DWORD dOldone;
 	xx = VirtualProtect(sMemPE.pPEBase, sMemPE.cpNTROOT->OptionalHeader.SizeOfHeaders, PAGE_READONLY, &dOldone);
-
 	return sMemPE;
-
 }
 
 
