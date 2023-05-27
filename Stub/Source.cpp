@@ -462,18 +462,12 @@ MemoryPE RelocManage()
 MemoryPE Setup()
 {
 	MemoryPE sMemPE = RelocManage();
+	PIMAGE_SECTION_HEADER pSecRef = IMAGE_FIRST_SECTION(sMemPE.cpNTROOT);
 
 	printf("\n========VIRTUAL PERMISSIONS\n\n");
 	
 	DWORD dOldone;
-	PIMAGE_SECTION_HEADER pSecRef = IMAGE_FIRST_SECTION(sMemPE.cpNTROOT);
-	
-	x = VirtualProtect(sMemPE.pPEBase, sMemPE.cpNTROOT->OptionalHeader.SizeOfHeaders, PAGE_READWRITE, &dOldone);
-	if (x == 0)
-	{
-		printf("[-] Stub Failure to Self-Modify\n");
-		exit(1);
-	}
+	xx = VirtualProtect(sMemPE.pPEBase, sMemPE.cpNTROOT->OptionalHeader.SizeOfHeaders, PAGE_READONLY, &dOldone);
 
 	for (int i = 0; i < sMemPE.cpNTROOT->FileHeader.NumberOfSections; ++i)
 	{
@@ -501,10 +495,7 @@ MemoryPE Setup()
 			break;
 
 		}
-
-	}
-	
-	xx = VirtualProtect(sMemPE.pPEBase, sMemPE.cpNTROOT->OptionalHeader.SizeOfHeaders, PAGE_READONLY, &dOldone);
+	}	
 	return sMemPE;
 }
 
