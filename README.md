@@ -1,23 +1,17 @@
 # x64-EXE-Packer
-## A software packer for 64 bit Windows executables. An exploratory project.
+## A software packer for 64 bit Windows executables.
 
 Progress:
 - [x] Stub 
 - [x] Packer
 - [x] Custom Cipher
-- [ ] Junk Code Generator?
-- [ ] File Bumper?
-- [ ] Dynamic bytecode additions for static signature evasion? 
-- [ ] Polish & Tidy
+- [ ] Control Flow Flattening - IN PROGRESS
 
 The stub, packer, and encryption routine are all ironed out on the logic side:
 
 - The encryption routine is a 64-bit block cipher which uses a 128-bit key, which does 7 rounds of encryption using bitwise rotates and xors. It's not great, but hopefully unique enough to throw analyst off. 
 - The stub looks for ".xss" section within itself, and extracts PE data from it.
 - The packer copies the stub, appends a .xss section to the end of it, and then appends the targeted file for packing at the end of the new stub, after encrypting it.
-
-Currently polishing up by adding cmdline arguements & cutting unused/debug content out.
-Working out feature implementations to move towards this being a red team operations tool for encoding payloads
 
 
 ## Sources
